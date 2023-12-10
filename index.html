@@ -1,44 +1,263 @@
+<!DOCTYPE html>
+<html lang="es">
 
-<title>Malinche Radio</title>
-<link rel="shortcut icon" href="js/2991595.png"/>
-<script src="js/jquery-3.2.1.min.js"></script>
-<script src="js/lunaradio-sincors.js"></script>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Malinche Radio</title>
+    <link rel="shortcut icon" href="https://cdn-icons-png.flaticon.com/128/2829/2829075.png" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
 
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background: #000000 url(js/portada.jpg) bottom / cover no-repeat;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            position: relative;
+        }
 
-<div id="lunaradio" style="width:100%; height:100%;background: #000000 url(js/portada.jpg) bottom / cover no-repeat;">loading...</div>			
+        #lunaradio {
+            width: 100%;
+            height: 100vh;
+            background: #000000 url(js/portada.jpg) bottom / cover no-repeat;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
 
-<script>
-$("#lunaradio").lunaradio({
-userinterface: "big", 
-backgroundcolor: "",
-fontcolor: "#ffffff",
-hightlightcolor: "#78C1F3", 
-fontname: "Unica One", 
-googlefont: "Anton&display=swap", 
-fontratio: "0.4", 
-radioname: ".:: Malinche Radio ::.", 
-scroll: "false", 
-coverimage: "js/logo.jpg",
-onlycoverimage: "false",
-coverstyle: "animated",
-usevisualizer: "real", 
-visualizertype: "1", 
-metadatatechnic: "",
-ownmetadataurl: "", 
-streamurl: "http://stream.zeno.fm/2aeez7zqhkhvv", 
-streamtype: "radiozeno", 
-icecastmountpoint: "",
-shoutcastpath: "/stream",
-shoutcastid: "1", 
-streamsuffix: "", 
-radionomyid: "", 
-radionomyapikey: "",
-radiojarid: "",  
-radiocoid: "",
-itunestoken: "1000lIPN", 
-metadatainterval: "5000", 
-volume: "100",
-debug: "false",
-autoplay: "true"
-});
-</script>
+        #contador {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            color: #fff;
+            z-index: 1;
+        }
+
+        #comment-btn,
+        .social-btn {
+            position: fixed;
+            bottom: 20px;
+            cursor: pointer;
+            z-index: 2;
+            font-size: 18px;
+            padding: 10px;
+            border-radius: 50%;
+            background-color: #fff;
+        }
+
+        #comment-btn i,
+        .social-btn i {
+            color: #000;
+        }
+
+        .social-btn {
+            transition: opacity 0.5s ease-in-out;
+            margin-right: 10px; /* Espacio entre botones de redes sociales */
+        }
+
+        #comment-modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: linear-gradient(to right, #800080, #ffffff);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            z-index: 3;
+            transition: opacity 0.5s ease-in-out;
+        }
+
+        #comment-modal.show {
+            display: block;
+        }
+
+        #comment-modal-close {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            cursor: pointer;
+            font-size: 20px;
+        }
+
+        #comments-container {
+            max-height: 200px;
+            overflow-y: auto;
+            margin-top: 20px;
+            text-align: left;
+        }
+
+        .comment-item,
+        .social-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .delete-btn {
+            background-color: #ff0000;
+            color: #fff;
+            padding: 5px 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Contenedor del contador -->
+    <div id="contador">
+        <!-- El código proporcionado -->
+        <div id="sfcm6j1swat31u9xa752dp8jrfqf7zxj47c"></div>
+        <script type="text/javascript" src="https://counter8.optistats.ovh/private/counter.js?c=m6j1swat31u9xa752dp8jrfqf7zxj47c&down=async" async></script>
+    </div>
+
+    <!-- Contenedor de Lunaradio -->
+    <div id="lunaradio">loading...</div>
+
+    <!-- Botón de comentarios -->
+    <div id="comment-btn" onclick="openComments()">
+        <i class="fas fa-comments"></i>
+    </div>
+
+    <!-- Ventana de comentarios -->
+    <div id="comment-modal">
+        <!-- Botón de cerrar -->
+        <span id="comment-modal-close" onclick="closeComments()">&times;</span>
+        <!-- Contenido de la ventana de comentarios -->
+        <h2>Comentarios</h2>
+        <textarea id="comment-input" rows="4" cols="50" placeholder="Escribe tu comentario aquí..."></textarea>
+        <button onclick="saveComment()"><i class="fas fa-paper-plane"></i></button>
+        <div id="comments-container"></div>
+    </div>
+
+    <!-- Botones de redes sociales -->
+    <div class="social-btn" onclick="openSocial('https://www.facebook.com/')">
+        <i class="fab fa-facebook"></i>
+    </div>
+    <div class="social-btn" onclick="openSocial('https://api.whatsapp.com/')">
+        <i class="fab fa-whatsapp"></i>
+    </div>
+    <div class="social-btn" onclick="openSocial('https://www.instagram.com/')">
+        <i class="fab fa-instagram"></i>
+    </div>
+    <div class="social-btn" onclick="openSocial('https://www.tiktok.com/')">
+        <i class="fab fa-tiktok"></i>
+    </div>
+    <div class="social-btn" onclick="openSocial('https://www.youtube.com/')">
+        <i class="fab fa-youtube"></i>
+    </div>
+
+    <!-- Scripts del reproductor de audio -->
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <script src="js/lunaradio-sincors.js"></script>
+
+    <script>
+        $("#lunaradio").lunaradio({
+            // Configuración de Lunaradio...
+            userinterface: "big",
+            backgroundcolor: "",
+            fontcolor: "#000117",
+            hightlightcolor: "#903495",
+            fontname: "Candara",
+            googlefont: "Anton&display=swap",
+            fontratio: "0.7",
+            radioname: ".:: Malinche Radio ::.",
+            scroll: "false",
+            coverimage: "js/logo.jpg",
+            onlycoverimage: "false",
+            coverstyle: "animated",
+            usevisualizer: "real",
+            visualizertype: "4",
+            metadatatechnic: "",
+            ownmetadataurl: "",
+            streamurl: "http://stream.zeno.fm/2aeez7zqhkhvv",
+            streamtype: "radiozeno",
+            icecastmountpoint: "",
+            shoutcastpath: "/stream",
+            shoutcastid: "1",
+            streamsuffix: "",
+            radionomyid: "",
+            radionomyapikey: "",
+            radiojarid: "",
+            radiocoid: "",
+            itunestoken: "1000lIPN",
+            metadatainterval: "5000",
+            volume: "100",
+            debug: "false",
+            autoplay: "true"
+        });
+
+        function openComments() {
+            document.getElementById("comment-modal").classList.add("show");
+            loadComments();
+        }
+
+        function closeComments() {
+            document.getElementById("comment-modal").classList.remove("show");
+        }
+
+        function saveComment() {
+            const comment = document.getElementById("comment-input").value;
+            if (comment.trim() !== "") {
+                const comments = JSON.parse(localStorage.getItem("comments")) || [];
+                comments.push(comment);
+                localStorage.setItem("comments", JSON.stringify(comments));
+                loadComments();
+                document.getElementById("comment-input").value = "";
+            }
+        }
+
+        function deleteComment(index) {
+            const comments = JSON.parse(localStorage.getItem("comments")) || [];
+            comments.splice(index, 1);
+            localStorage.setItem("comments", JSON.stringify(comments));
+            loadComments();
+        }
+
+        function loadComments() {
+            const comments = JSON.parse(localStorage.getItem("comments")) || [];
+            const commentsContainer = document.getElementById("comments-container");
+            commentsContainer.innerHTML = "<h3>Comentarios anteriores:</h3>";
+
+            if (comments.length > 0) {
+                comments.forEach((comment, index) => {
+                    const commentItem = document.createElement("div");
+                    commentItem.classList.add("comment-item");
+
+                    const commentText = document.createElement("p");
+                    commentText.textContent = `${index + 1}. ${comment}`;
+                    commentItem.appendChild(commentText);
+
+                    const deleteBtn = document.createElement("button");
+                    deleteBtn.classList.add("delete-btn");
+                    deleteBtn.innerHTML = '<i class="fas fa-trash"></i>';
+                    deleteBtn.onclick = function () {
+                        deleteComment(index);
+                    };
+                    commentItem.appendChild(deleteBtn);
+
+                    commentsContainer.appendChild(commentItem);
+                });
+            } else {
+                commentsContainer.innerHTML += "<p>No hay comentarios aún.</p>";
+            }
+        }
+
+        function openSocial(link) {
+            window.open(link, '_blank');
+        }
+    </script>
+</body>
+
+</html>
