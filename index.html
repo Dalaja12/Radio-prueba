@@ -19,12 +19,15 @@
             box-sizing: border-box;
             position: relative;
             overflow-x: hidden; 
+            overflow-y: hidden;
+            box-sizing: border-box;
+            background-attachment: fixed;
+   
         }
 
         #lunaradio {
             width: 100%;
-            height: 100vh;
-            background: #000000 url(js/portada.jpg) bottom / cover no-repeat;
+            height: 95vh;
             margin: 0; /* Ajusta según sea necesario */
             padding: 0;
         }
@@ -53,7 +56,7 @@
         @media (max-width: 100vh) {
             
          body { 
-            font-size: 3vw;
+            font-size: 1vw;
         }
 
             #comment-btn,
@@ -128,12 +131,12 @@
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
             z-index: 3;
             transition: opacity 0.5s ease-in-out;
-            width: 70vw;
+            width: 50vw;
             max-width: 300px;
         }
         #contact-container {
             text-align: center; /* Centra el contenido */
-            max-height: 600px; /* Ajusta el valor según tus necesidades */
+            max-height: 100vh; /* Ajusta el valor según tus necesidades */
             overflow-y: auto;
         }
 
@@ -265,7 +268,7 @@
             
         </div>
         <div id="map-container">
-            <iframe src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d15054.376712369289!2d-97.9665994!3d19.386717!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x85cffced901ddce7%3A0x900a8087658724ce!2sUniversidad%20Tecnol%C3%B3gica%20de%20Tlaxcala!5e0!3m2!1ses-419!2smx!4v1703809831513!5m2!1ses-419!2smx" width="250 " height="250" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe> <!-- Pega aquí el código de inserción de Google Maps -->
+            <iframe src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d15054.376712369289!2d-97.9665994!3d19.386717!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x85cffced901ddce7%3A0x900a8087658724ce!2sUniversidad%20Tecnol%C3%B3gica%20de%20Tlaxcala!5e0!3m2!1ses-419!2smx!4v1703809831513!5m2!1ses-419!2smx" width="200 " height="200" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe> <!-- Pega aquí el código de inserción de Google Maps -->
         </div>
     </div>
 
@@ -386,19 +389,4 @@
 </body>
 
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
