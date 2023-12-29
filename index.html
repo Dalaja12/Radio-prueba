@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="es">
 
 <head>
@@ -62,8 +62,8 @@
             #comment-btn,
             #info-btn,
             #contact-btn {
-                font-size:3vw;
-                padding: 1vw;
+                font-size:4vw;
+                padding: 2vw;
                 
             }
         }
@@ -91,19 +91,20 @@
             left: 50%;
             transform: translate(-50%, -50%);
             background: linear-gradient(to right, #800080, #ffffff);
-            padding: 10px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            padding: 20px;
+            border-radius: 20px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
             z-index: 3;
             transition: opacity 0.5s ease-in-out;
             max-width: 450px; /* Ajusta el valor según tus necesidades */
             width: 90vw; /* Esto permite que la ventana sea del 90% del ancho de la ventana del navegador */
         }
         #info-container {
-            max-height: 300px; /* Ajusta el valor según tus necesidades */
+            max-height: 400px; /* Ajusta el valor según tus necesidades */
             overflow-y: auto;
             scrollbar-width: thin; /* para navegadores Firefox */
             scrollbar-color: #903495 #ffffff; /* para navegadores Firefox */
+            font-size: 18px;
         }
 
         /* Estilos adicionales para navegadores WebKit (Chrome, Safari) */
@@ -169,6 +170,7 @@
             overflow-y: auto;
             margin-top: 2vh;
             text-align: left;
+            font-size: 18px;
         }
 
         .comment-item,
@@ -268,7 +270,7 @@
             
         </div>
         <div id="map-container">
-            <iframe src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d15054.376712369289!2d-97.9665994!3d19.386717!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x85cffced901ddce7%3A0x900a8087658724ce!2sUniversidad%20Tecnol%C3%B3gica%20de%20Tlaxcala!5e0!3m2!1ses-419!2smx!4v1703809831513!5m2!1ses-419!2smx" width="200 " height="200" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe> <!-- Pega aquí el código de inserción de Google Maps -->
+            <iframe src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d15054.376712369289!2d-97.9665994!3d19.386717!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x85cffced901ddce7%3A0x900a8087658724ce!2sUniversidad%20Tecnol%C3%B3gica%20de%20Tlaxcala!5e0!3m2!1ses-419!2smx!4v1703809831513!5m2!1ses-419!2smx" width="150" height="160" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe> <!-- Pega aquí el código de inserción de Google Maps -->
         </div>
     </div>
 
@@ -279,9 +281,9 @@
         $("#lunaradio").lunaradio({
             userinterface: "big",
             backgroundcolor: "",
-            fontcolor: "#000117",
-            hightlightcolor: "#903495",
-            fontname: "Candara",
+            fontcolor: "#f7f2f7",
+            hightlightcolor: "#d004db",
+            fontname: "Courier",
             googlefont: "Anton&display=swap",
             fontratio: "0.5",
             radioname: ".:: Malinche Radio ::.",
@@ -290,9 +292,9 @@
             onlycoverimage: "true",
             coverstyle: "animated",
             usevisualizer: "real",
-            visualizertype: "4",
-            metadatatechnic: "",
-            ownmetadataurl: "",
+            visualizertype: "3",
+            metadatatechnic: "2",
+            ownmetadataurl: "2",
             streamurl: "http://stream.zeno.fm/2aeez7zqhkhvv",
             streamtype: "radiozeno",
             icecastmountpoint: "",
@@ -389,4 +391,3 @@
 </body>
 
 </html>
-
