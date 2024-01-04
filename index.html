@@ -320,30 +320,31 @@
     }
 
     function loadComments() {
-        const commentsContainer = $("#comments-container");
-        commentsContainer.html("<h3>Comentarios anteriores:</h3>");
+    const commentsContainer = $("#comment-modal #comments-container");
+    commentsContainer.html("<h3>Comentarios anteriores:</h3>");
 
-        // Obtiene los comentarios existentes desde localStorage
-        const existingComments = JSON.parse(localStorage.getItem("comments")) || [];
+    // Obtiene los comentarios existentes desde localStorage
+    const existingComments = JSON.parse(localStorage.getItem("comments")) || [];
 
-        if (existingComments.length > 0) {
-            existingComments.forEach((comment, index) => {
-                const commentItem = $("<div>").addClass("comment-item");
-                const commentText = $("<p>").text(`${index + 1}. ${comment}`);
-                const deleteBtn = $("<button>")
-                    .addClass("delete-btn")
-                    .html('<i class="fas fa-trash"></i>')
-                    .click(function () {
-                        deleteComment(index);
-                    });
+    if (existingComments.length > 0) {
+        existingComments.forEach((comment, index) => {
+            const commentItem = $("<div>").addClass("comment-item");
+            const commentText = $("<p>").text(`${index + 1}. ${comment}`);
+            const deleteBtn = $("<button>")
+                .addClass("delete-btn")
+                .html('<i class="fas fa-trash"></i>')
+                .click(function () {
+                    deleteComment(index);
+                });
 
-                commentItem.append(commentText, deleteBtn);
-                commentsContainer.append(commentItem);
-            });
-        } else {
-            commentsContainer.append("<p>No hay comentarios aún.</p>");
-        }
+            commentItem.append(commentText, deleteBtn);
+            commentsContainer.append(commentItem);
+        });
+    } else {
+        commentsContainer.append("<p>No hay comentarios aún.</p>");
     }
+}
+
 
     // Resto de tu código JavaScript
 </script>
@@ -466,3 +467,4 @@
 </body>
 
 </html>
+
