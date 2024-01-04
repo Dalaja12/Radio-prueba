@@ -1,5 +1,6 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
+    
 
 <head>
     <meta charset="UTF-8">
@@ -63,7 +64,7 @@
             #info-btn,
             #contact-btn {
                 font-size:3vw;
-                padding: 1svw;
+                padding: 1vw;
                 
             }
         }
@@ -274,8 +275,92 @@
         </div>
     </div>
 
+    <!-- Agrega el SDK de Firebase -->
+<script src="https://www.gstatic.com/firebasejs/9.5.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.5.0/firebase-database.js"></script>
+
+<script>
+  // Configura tu proyecto Firebase
+  const firebaseConfig = {
+    apiKey: "AIzaSyATSV6O5u6Wr0wUOjkZfyP-Bkx_CPBl_Zk",
+    authDomain: "comentarios-radio-9727e.firebaseapp.com",
+    projectId: "comentarios-radio-9727e",
+    storageBucket: "comentarios-radio-9727e.appspot.com",
+    messagingSenderId: "746508664126",
+    appId: "1:746508664126:web:a13f5ed7707310083b406f",
+    measurementId: "G-E3KD1F6ZCM"
+  };
+
+  // Inicializa Firebase
+  const app = firebase.initializeApp(firebaseConfig);
+
+  // ...
+
+  function saveComment() {
+    const comment = $("#comment-input").val().trim();
+
+    if (comment !== "") {
+      // Obtiene una referencia a la base de datos
+      const database = firebase.database(app);
+      const commentsRef = database.ref('comments');
+
+      // Agrega el comentario a la base de datos
+      commentsRef.push(comment);
+
+      // Limpia el campo de comentarios
+      $("#comment-input").val("");
+    }
+  }
+
+  function loadComments() {
+    const commentsContainer = $("#comments-container");
+
+    // Obtiene una referencia a la base de datos
+    const database = firebase.database(app);
+    const commentsRef = database.ref('comments');
+
+    // Escucha cambios en la base de datos y actualiza los comentarios
+    commentsRef.on('value', (snapshot) => {
+      const comments = snapshot.val() || {};
+      commentsContainer.html("<h3>Comentarios anteriores:</h3>");
+
+      if (Object.keys(comments).length > 0) {
+        Object.keys(comments).forEach((key, index) => {
+          const commentItem = $("<div>").addClass("comment-item");
+          const commentText = $("<p>").text(`${index + 1}. ${comments[key]}`);
+          const deleteBtn = $("<button>")
+            .addClass("delete-btn")
+            .html('<i class="fas fa-trash"></i>')
+            .click(function () {
+              deleteComment(key);
+            });
+
+          commentItem.append(commentText, deleteBtn);
+          commentsContainer.append(commentItem);
+        });
+      } else {
+        commentsContainer.append("<p>No hay comentarios aún.</p>");
+      }
+    });
+  }
+
+  function deleteComment(commentKey) {
+    // Obtiene una referencia a la base de datos
+    const database = firebase.database(app);
+    const commentsRef = database.ref('comments');
+
+    // Elimina el comentario de la base de datos
+    commentsRef.child(commentKey).remove();
+  }
+
+  // ...
+</script>
+
+
     <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
     <script src="js/lunaradio-sincors.js"></script>
+
+
 
     <script>
         $("#lunaradio").lunaradio({
