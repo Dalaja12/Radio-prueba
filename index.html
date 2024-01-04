@@ -277,68 +277,75 @@
             <iframe src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d15054.376712369289!2d-97.9665994!3d19.386717!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x85cffced901ddce7%3A0x900a8087658724ce!2sUniversidad%20Tecnol%C3%B3gica%20de%20Tlaxcala!5e0!3m2!1ses-419!2smx!4v1703809831513!5m2!1ses-419!2smx" width="150" height="160" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe> <!-- Pega aquí el código de inserción de Google Maps -->
         </div>
     </div>
-    <script>
-        // Tu configuración de Firebase
-        var firebaseConfig = {
-            apiKey: "AIzaSyAviRaUfNn8ri0KW5Su69sJ_sHQ1cE-6NE",
-            authDomain: "comentarios1radio.firebaseapp.com",
-            projectId: "comentarios1radio",
-            storageBucket: "comentarios1radio.appspot.com",
-            messagingSenderId: "446347386330",
-            appId: "1:446347386330:web:152d9453b1f74e1f2534e3",
-            measurementId: "G-5M169LTD1Q"
-        };
+    <!-- Tu configuración de Firebase -->
+<!-- Tu configuración de Firebase -->
+<script type="module">
+  // Importa las funciones necesarias de la SDK de Firebase
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js";
+  import { getAnalytics } from "https://www.gstatic.com/firebasejs/8.10.0/firebase-analytics.js";
+  import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc } from "./js/firebase-firestore-compat.js"; // ajusta la ruta según donde hayas guardado el archivo
 
-        // Inicializa Firebase
-        firebase.initializeApp(firebaseConfig);
+  // Configuración de Firebase
+  const firebaseConfig = {
+    apiKey: "AIzaSyAviRaUfNn8ri0KW5Su69sJ_sHQ1cE-6NE",
+    authDomain: "comentarios1radio.firebaseapp.com",
+    projectId: "comentarios1radio",
+    storageBucket: "comentarios1radio.appspot.com",
+    messagingSenderId: "446347386330",
+    appId: "1:446347386330:web:152d9453b1f74e1f2534e3",
+    measurementId: "G-5M169LTD1Q"
+  };
 
-        // Funciones para manipular comentarios en Firestore
-        function saveComment() {
-            const comment = $("#comment-input").val();
-            if (comment.trim() !== "") {
-                const commentsRef = firebase.firestore().collection("comments");
-                commentsRef.add({ text: comment });
-                loadComments();
-                $("#comment-input").val("");
-            }
-        }
+  // Inicializa Firebase
+  const app = initializeApp(firebaseConfig);
+  const analytics = getAnalytics(app);
+  const db = getFirestore(app);
+  // Funciones para manipular comentarios en Firestore
+  function saveComment() {
+    const comment = $("#comment-input").val();
+    if (comment.trim() !== "") {
+      addDoc(collection(db, "comments"), { text: comment });
+      loadComments();
+      $("#comment-input").val("");
+    }
+  }
 
-        function loadComments() {
-            const commentsRef = firebase.firestore().collection("comments");
-            const commentsContainer = $("#comments-container");
-            commentsContainer.html("<h3>Comentarios anteriores:</h3>");
+  function loadComments() {
+    const commentsRef = collection(db, "comments");
+    const commentsContainer = $("#comments-container");
+    commentsContainer.html("<h3>Comentarios anteriores:</h3>");
 
-            commentsRef.get().then((querySnapshot) => {
-                if (querySnapshot.size > 0) {
-                    querySnapshot.forEach((doc) => {
-                        const commentItem = $("<div>").addClass("comment-item");
-                        const commentText = $("<p>").text(`${doc.id}. ${doc.data().text}`);
-                        const deleteBtn = $("<button>")
-                            .addClass("delete-btn")
-                            .html('<i class="fas fa-trash"></i>')
-                            .click(function () {
-                                deleteComment(doc.id);
-                            });
-
-                        commentItem.append(commentText, deleteBtn);
-                        commentsContainer.append(commentItem);
-                    });
-                } else {
-                    commentsContainer.append("<p>No hay comentarios aún.</p>");
-                }
+    getDocs(commentsRef).then((querySnapshot) => {
+      if (!querySnapshot.empty) {
+        querySnapshot.forEach((doc) => {
+          const commentItem = $("<div>").addClass("comment-item");
+          const commentText = $("<p>").text(`${doc.id}. ${doc.data().text}`);
+          const deleteBtn = $("<button>")
+            .addClass("delete-btn")
+            .html('<i class="fas fa-trash"></i>')
+            .click(function () {
+              deleteComment(doc.id);
             });
-        }
 
-        function deleteComment(commentId) {
-            const commentsRef = firebase.firestore().collection("comments");
-            commentsRef.doc(commentId).delete().then(() => {
-                loadComments();
-            });
-        }
+          commentItem.append(commentText, deleteBtn);
+          commentsContainer.append(commentItem);
+        });
+      } else {
+        commentsContainer.append("<p>No hay comentarios aún.</p>");
+      }
+    });
+  }
 
-        // El resto de tu código JavaScript va aquí
+  function deleteComment(commentId) {
+    const commentsRef = collection(db, "comments");
+    deleteDoc(doc(commentsRef, commentId)).then(() => {
+      loadComments();
+    });
+  }
 
-    </script>
+  // Resto de tu código JavaScript va aquí
+</script>
+
 
     <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
     <script src="js/lunaradio-sincors.js"></script>
@@ -459,3 +466,11 @@
 </body>
 
 </html>
+
+
+
+
+
+
+
+
