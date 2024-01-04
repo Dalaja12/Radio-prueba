@@ -274,89 +274,81 @@
             <iframe src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d15054.376712369289!2d-97.9665994!3d19.386717!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x85cffced901ddce7%3A0x900a8087658724ce!2sUniversidad%20Tecnol%C3%B3gica%20de%20Tlaxcala!5e0!3m2!1ses-419!2smx!4v1703809831513!5m2!1ses-419!2smx" width="150" height="160" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe> <!-- Pega aquí el código de inserción de Google Maps -->
         </div>
     </div>
-    
+    <!-- Tu código HTML existente -->
 
-    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
-    <script src="js/lunaradio-sincors.js"></script>
-       <!-- Agrega el SDK de Firebase -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.5.0/firebase-app.esm.js";
-        import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.5.0/firebase-analytics.esm.js";
-        import { getDatabase, ref, push, onValue, set } from "https://www.gstatic.com/firebasejs/9.5.0/firebase-database.esm.js";
+<script>
+    // Al cargar la página, intenta cargar los comentarios desde localStorage
+    $(document).ready(function () {
+        loadComments();
+    });
 
-        // Configura tu proyecto Firebase
-        const firebaseConfig = {
-            apiKey: "AIzaSyATSV6O5u6Wr0wUOjkZfyP-Bkx_CPBl_Zk",
-            authDomain: "comentarios-radio-9727e.firebaseapp.com",
-            projectId: "comentarios-radio-9727e",
-            storageBucket: "comentarios-radio-9727e.appspot.com",
-            messagingSenderId: "746508664126",
-            appId: "1:746508664126:web:a13f5ed7707310083b406f",
-            measurementId: "G-E3KD1F6ZCM"
-        };
+    $("#comment-btn").click(function () {
+        $("#comment-modal").addClass("show");
+        loadComments();
+    });
 
-        // Inicializa Firebase
-        try {
-            const app = initializeApp(firebaseConfig);
-            const analytics = getAnalytics(app);
-        } catch (error) {
-            console.error("Error al inicializar Firebase:", error);
+    function saveComment() {
+        const comment = $("#comment-input").val();
+        if (comment.trim() !== "") {
+            // Obtiene los comentarios existentes desde localStorage
+            const existingComments = JSON.parse(localStorage.getItem("comments")) || [];
+
+            // Agrega el nuevo comentario al arreglo
+            existingComments.push(comment);
+
+            // Guarda el arreglo actualizado en localStorage
+            localStorage.setItem("comments", JSON.stringify(existingComments));
+
+            loadComments();
+            $("#comment-input").val("");
         }
+    }
 
-        // Referencia a la base de datos y a la colección 'comments'
-        const database = getDatabase(app);
-        const commentsRef = ref(database, 'comments');
+    function deleteComment(index) {
+        // Obtiene los comentarios existentes desde localStorage
+        const existingComments = JSON.parse(localStorage.getItem("comments")) || [];
 
-        function saveComment() {
-            const comment = document.getElementById("comment-input").value.trim();
+        // Elimina el comentario del arreglo usando el índice
+        existingComments.splice(index, 1);
 
-            if (comment !== "") {
-                // Agrega el comentario a la base de datos
-                const newCommentRef = push(commentsRef);
-                set(newCommentRef, comment);
+        // Guarda el arreglo actualizado en localStorage
+        localStorage.setItem("comments", JSON.stringify(existingComments));
 
-                // Limpia el campo de comentarios
-                document.getElementById("comment-input").value = "";
-            }
-        }
+        loadComments();
+    }
 
-        function loadComments() {
-            const commentsContainer = document.getElementById("comments-container");
+    function loadComments() {
+        const commentsContainer = $("#comments-container");
+        commentsContainer.html("<h3>Comentarios anteriores:</h3>");
 
-            // Escucha cambios en la base de datos y actualiza los comentarios
-            onValue(commentsRef, (snapshot) => {
-                const comments = snapshot.val() || {};
-                commentsContainer.innerHTML = "<h3>Comentarios anteriores:</h3>";
+        // Obtiene los comentarios existentes desde localStorage
+        const existingComments = JSON.parse(localStorage.getItem("comments")) || [];
 
-                if (Object.keys(comments).length > 0) {
-                    Object.keys(comments).forEach((key, index) => {
-                        const commentItem = document.createElement("div");
-                        commentItem.classList.add("comment-item");
-                        const commentText = document.createElement("p");
-                        commentText.textContent = `${index + 1}. ${comments[key]}`;
-                        const deleteBtn = document.createElement("button");
-                        deleteBtn.classList.add("delete-btn");
-                        deleteBtn.innerHTML = '<i class="fas fa-trash"></i>';
-                        deleteBtn.addEventListener("click", function () {
-                            deleteComment(key);
-                        });
-
-                        commentItem.appendChild(commentText);
-                        commentItem.appendChild(deleteBtn);
-                        commentsContainer.appendChild(commentItem);
+        if (existingComments.length > 0) {
+            existingComments.forEach((comment, index) => {
+                const commentItem = $("<div>").addClass("comment-item");
+                const commentText = $("<p>").text(`${index + 1}. ${comment}`);
+                const deleteBtn = $("<button>")
+                    .addClass("delete-btn")
+                    .html('<i class="fas fa-trash"></i>')
+                    .click(function () {
+                        deleteComment(index);
                     });
-                } else {
-                    commentsContainer.innerHTML += "<p>No hay comentarios aún.</p>";
-                }
-            });
-        }
 
-        function deleteComment(commentKey) {
-            // Elimina el comentario de la base de datos
-            set(ref(commentsRef, commentKey), null);
+                commentItem.append(commentText, deleteBtn);
+                commentsContainer.append(commentItem);
+            });
+        } else {
+            commentsContainer.append("<p>No hay comentarios aún.</p>");
         }
-    </script>
-    
+    }
+
+    // Resto de tu código JavaScript
+</script>
+
+
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="js/lunaradio-sincors.js"></script>
 
 
 
