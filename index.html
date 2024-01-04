@@ -278,87 +278,84 @@
 
     <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
     <script src="js/lunaradio-sincors.js"></script>
-      <!-- Agrega el SDK de Firebase -->
-<script src="https://www.gstatic.com/firebasejs/9.5.0/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.5.0/firebase-database.js"></script>
+       <!-- Agrega el SDK de Firebase -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.5.0/firebase-app.esm.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.5.0/firebase-analytics.esm.js";
+        import { getDatabase, ref, push, onValue, set } from "https://www.gstatic.com/firebasejs/9.5.0/firebase-database.esm.js";
 
-<script>
-  // Configura tu proyecto Firebase
-  const firebaseConfig = {
-    apiKey: "AIzaSyATSV6O5u6Wr0wUOjkZfyP-Bkx_CPBl_Zk",
-    authDomain: "comentarios-radio-9727e.firebaseapp.com",
-    projectId: "comentarios-radio-9727e",
-    storageBucket: "comentarios-radio-9727e.appspot.com",
-    messagingSenderId: "746508664126",
-    appId: "1:746508664126:web:a13f5ed7707310083b406f",
-    measurementId: "G-E3KD1F6ZCM"
-  };
+        // Configura tu proyecto Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyATSV6O5u6Wr0wUOjkZfyP-Bkx_CPBl_Zk",
+            authDomain: "comentarios-radio-9727e.firebaseapp.com",
+            projectId: "comentarios-radio-9727e",
+            storageBucket: "comentarios-radio-9727e.appspot.com",
+            messagingSenderId: "746508664126",
+            appId: "1:746508664126:web:a13f5ed7707310083b406f",
+            measurementId: "G-E3KD1F6ZCM"
+        };
 
-  // Inicializa Firebase
-  const app = firebase.initializeApp(firebaseConfig);
+        // Inicializa Firebase
+        try {
+            const app = initializeApp(firebaseConfig);
+            const analytics = getAnalytics(app);
+        } catch (error) {
+            console.error("Error al inicializar Firebase:", error);
+        }
 
-  // ...
+        // Referencia a la base de datos y a la colección 'comments'
+        const database = getDatabase(app);
+        const commentsRef = ref(database, 'comments');
 
-  function saveComment() {
-    const comment = $("#comment-input").val().trim();
+        function saveComment() {
+            const comment = document.getElementById("comment-input").value.trim();
 
-    if (comment !== "") {
-      // Obtiene una referencia a la base de datos
-      const database = firebase.database(app);
-      const commentsRef = database.ref('comments');
+            if (comment !== "") {
+                // Agrega el comentario a la base de datos
+                const newCommentRef = push(commentsRef);
+                set(newCommentRef, comment);
 
-      // Agrega el comentario a la base de datos
-      commentsRef.push(comment);
+                // Limpia el campo de comentarios
+                document.getElementById("comment-input").value = "";
+            }
+        }
 
-      // Limpia el campo de comentarios
-      $("#comment-input").val("");
-    }
-  }
+        function loadComments() {
+            const commentsContainer = document.getElementById("comments-container");
 
-  function loadComments() {
-    const commentsContainer = $("#comments-container");
+            // Escucha cambios en la base de datos y actualiza los comentarios
+            onValue(commentsRef, (snapshot) => {
+                const comments = snapshot.val() || {};
+                commentsContainer.innerHTML = "<h3>Comentarios anteriores:</h3>";
 
-    // Obtiene una referencia a la base de datos
-    const database = firebase.database(app);
-    const commentsRef = database.ref('comments');
+                if (Object.keys(comments).length > 0) {
+                    Object.keys(comments).forEach((key, index) => {
+                        const commentItem = document.createElement("div");
+                        commentItem.classList.add("comment-item");
+                        const commentText = document.createElement("p");
+                        commentText.textContent = `${index + 1}. ${comments[key]}`;
+                        const deleteBtn = document.createElement("button");
+                        deleteBtn.classList.add("delete-btn");
+                        deleteBtn.innerHTML = '<i class="fas fa-trash"></i>';
+                        deleteBtn.addEventListener("click", function () {
+                            deleteComment(key);
+                        });
 
-    // Escucha cambios en la base de datos y actualiza los comentarios
-    commentsRef.on('value', (snapshot) => {
-      const comments = snapshot.val() || {};
-      commentsContainer.html("<h3>Comentarios anteriores:</h3>");
-
-      if (Object.keys(comments).length > 0) {
-        Object.keys(comments).forEach((key, index) => {
-          const commentItem = $("<div>").addClass("comment-item");
-          const commentText = $("<p>").text(`${index + 1}. ${comments[key]}`);
-          const deleteBtn = $("<button>")
-            .addClass("delete-btn")
-            .html('<i class="fas fa-trash"></i>')
-            .click(function () {
-              deleteComment(key);
+                        commentItem.appendChild(commentText);
+                        commentItem.appendChild(deleteBtn);
+                        commentsContainer.appendChild(commentItem);
+                    });
+                } else {
+                    commentsContainer.innerHTML += "<p>No hay comentarios aún.</p>";
+                }
             });
+        }
 
-          commentItem.append(commentText, deleteBtn);
-          commentsContainer.append(commentItem);
-        });
-      } else {
-        commentsContainer.append("<p>No hay comentarios aún.</p>");
-      }
-    });
-  }
-
-  function deleteComment(commentKey) {
-    // Obtiene una referencia a la base de datos
-    const database = firebase.database(app);
-    const commentsRef = database.ref('comments');
-
-    // Elimina el comentario de la base de datos
-    commentsRef.child(commentKey).remove();
-  }
-
-  // ...
-</script>
-
+        function deleteComment(commentKey) {
+            // Elimina el comentario de la base de datos
+            set(ref(commentsRef, commentKey), null);
+        }
+    </script>
     
 
 
@@ -477,4 +474,3 @@
 </body>
 
 </html>
-
