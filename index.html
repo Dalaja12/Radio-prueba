@@ -299,38 +299,44 @@
         const commentsCollection = collection(firestore, 'comments');
       
         function saveComment() {
-          const comment = $("#comment-input").val().trim();
-          if (comment !== "") {
-            addDoc(commentsCollection, { text: comment }); // Almacena el comentario en Cloud Firestore
-            loadComments();
-            $("#comment-input").val("");
-          }
-        }
-      
-        function loadComments() {
-          getDocs(commentsCollection).then((querySnapshot) => {
-            const commentsContainer = $("#comments-container");
-            commentsContainer.html("<h3>Comentarios anteriores:</h3>");
-      
-            if (!querySnapshot.empty) {
-              querySnapshot.forEach((doc) => {
-                const commentItem = $("<div>").addClass("comment-item");
-                const commentText = $("<p>").text(`${doc.id}. ${doc.data().text}`);
-                const deleteBtn = $("<button>")
-                  .addClass("delete-btn")
-                  .html('<i class="fas fa-trash"></i>')
-                  .click(function () {
-                    deleteComment(doc.id);
-                  });
-      
-                commentItem.append(commentText, deleteBtn);
-                commentsContainer.append(commentItem);
-              });
-            } else {
-              commentsContainer.append("<p>No hay comentarios aún.</p>");
-            }
+  const comment = $("#comment-input").val().trim();
+  if (comment !== "") {
+    addDoc(commentsCollection, { text: comment })
+      .then(() => {
+        loadComments();
+        $("#comment-input").val("");
+      })
+      .catch((error) => {
+        console.error("Error al guardar el comentario:", error);
+      });
+  }
+}
+
+function loadComments() {
+  getDocs(commentsCollection).then((querySnapshot) => {
+    const commentsContainer = $("#comments-container");
+    commentsContainer.html("<h3>Comentarios anteriores:</h3>");
+
+    if (!querySnapshot.empty) {
+      querySnapshot.forEach((doc) => {
+        const commentItem = $("<div>").addClass("comment-item");
+        const commentText = $("<p>").text(`${doc.id}. ${doc.data().text}`);
+        const deleteBtn = $("<button>")
+          .addClass("delete-btn")
+          .html('<i class="fas fa-trash"></i>')
+          .click(function () {
+            deleteComment(doc.id);
           });
-        }
+
+        commentItem.append(commentText, deleteBtn);
+        commentsContainer.append(commentItem);
+      });
+    } else {
+      commentsContainer.append("<p>No hay comentarios aún.</p>");
+    }
+  });
+}
+
       
         function deleteComment(docId) {
           // Elimina el comentario de Cloud Firestore utilizando el ID del documento
