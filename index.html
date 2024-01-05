@@ -276,80 +276,79 @@
         </div>
     </div>
     <script type="module">
-        // Import the functions you need from the SDKs you need
+        // Importa las funciones que necesitas de las bibliotecas SDK de Firebase
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-analytics.js";
-        import { getDatabase, ref, push, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
-
-        // Your web app's Firebase configuration
-        // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+        import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+      
+        // Configuración de tu aplicación Firebase
         const firebaseConfig = {
-            apiKey: "AIzaSyATSV6O5u6Wr0wUOjkZfyP-Bkx_CPBl_Zk",
-            authDomain: "comentarios-radio-9727e.firebaseapp.com",
-            projectId: "comentarios-radio-9727e",
-            storageBucket: "comentarios-radio-9727e.appspot.com",
-            messagingSenderId: "746508664126",
-            appId: "1:746508664126:web:a13f5ed7707310083b406f",
-            measurementId: "G-E3KD1F6ZCM"
+          apiKey: "AIzaSyATSV6O5u6Wr0wUOjkZfyP-Bkx_CPBl_Zk",
+          authDomain: "comentarios-radio-9727e.firebaseapp.com",
+          projectId: "comentarios-radio-9727e",
+          storageBucket: "comentarios-radio-9727e.appspot.com",
+          messagingSenderId: "746508664126",
+          appId: "1:746508664126:web:a13f5ed7707310083b406f",
+          measurementId: "G-E3KD1F6ZCM"
         };
-
-        // Initialize Firebase
+      
+        // Inicializa Firebase
         const app = initializeApp(firebaseConfig);
         const analytics = getAnalytics(app);
-        const database = getDatabase(app);
-        const commentsRef = ref(database, 'comments');
-
+        const firestore = getFirestore(app);
+        const commentsCollection = collection(firestore, 'comments');
+      
         function saveComment() {
-            const comment = $("#comment-input").val().trim();
-            if (comment !== "") {
-                push(commentsRef, comment); // Almacena el comentario en Firebase
-                loadComments();
-                $("#comment-input").val("");
-            }
+          const comment = $("#comment-input").val().trim();
+          if (comment !== "") {
+            addDoc(commentsCollection, { text: comment }); // Almacena el comentario en Cloud Firestore
+            loadComments();
+            $("#comment-input").val("");
+          }
         }
-
+      
         function loadComments() {
-            onValue(commentsRef, (snapshot) => {
-                const comments = snapshot.val() || {};
-                const commentsContainer = $("#comments-container");
-                commentsContainer.html("<h3>Comentarios anteriores:</h3>");
-
-                if (Object.keys(comments).length > 0) {
-                    Object.entries(comments).forEach(([key, comment]) => {
-                        const commentItem = $("<div>").addClass("comment-item");
-                        const commentText = $("<p>").text(`${key}. ${comment}`);
-                        const deleteBtn = $("<button>")
-                            .addClass("delete-btn")
-                            .html('<i class="fas fa-trash"></i>')
-                            .click(function () {
-                                deleteComment(key);
-                            });
-
-                        commentItem.append(commentText, deleteBtn);
-                        commentsContainer.append(commentItem);
-                    });
-                } else {
-                    commentsContainer.append("<p>No hay comentarios aún.</p>");
-                }
-            });
+          getDocs(commentsCollection).then((querySnapshot) => {
+            const commentsContainer = $("#comments-container");
+            commentsContainer.html("<h3>Comentarios anteriores:</h3>");
+      
+            if (!querySnapshot.empty) {
+              querySnapshot.forEach((doc) => {
+                const commentItem = $("<div>").addClass("comment-item");
+                const commentText = $("<p>").text(`${doc.id}. ${doc.data().text}`);
+                const deleteBtn = $("<button>")
+                  .addClass("delete-btn")
+                  .html('<i class="fas fa-trash"></i>')
+                  .click(function () {
+                    deleteComment(doc.id);
+                  });
+      
+                commentItem.append(commentText, deleteBtn);
+                commentsContainer.append(commentItem);
+              });
+            } else {
+              commentsContainer.append("<p>No hay comentarios aún.</p>");
+            }
+          });
         }
-
-        function deleteComment(key) {
-            // Elimina el comentario de Firebase utilizando la clave
-            // Reemplaza con la lógica real de eliminación si es necesario
+      
+        function deleteComment(docId) {
+          // Elimina el comentario de Cloud Firestore utilizando el ID del documento
+          // Reemplaza con la lógica real de eliminación si es necesario
         }
-
+      
         $(document).ready(function () {
-            $("#comment-btn").click(function () {
-                $("#comment-modal").addClass("show");
-                loadComments();
-            });
-
-            $(".modal-close-btn").click(function () {
-                $(".modal").removeClass("show");
-            });
+          $("#comment-btn").click(function () {
+            $("#comment-modal").addClass("show");
+            loadComments();
+          });
+      
+          $(".modal-close-btn").click(function () {
+            $(".modal").removeClass("show");
+          });
         });
-    </script>
+      </script>
+      
 
     <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
     <script src="js/lunaradio-sincors.js"></script>
@@ -470,10 +469,3 @@
 </body>
 
 </html>
-
-
-
-
-
-
-
