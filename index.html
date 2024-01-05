@@ -5,14 +5,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
     
     <title>Malinche Radio</title>
     <link rel="shortcut icon" href="https://cdn-icons-png.flaticon.com/128/2829/2829075.png" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
-    <style>
     
+    <style>
         body {
             font-size: 1.5vw;
             font-family: Arial, sans-serif;
@@ -277,75 +275,81 @@
             <iframe src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d15054.376712369289!2d-97.9665994!3d19.386717!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x85cffced901ddce7%3A0x900a8087658724ce!2sUniversidad%20Tecnol%C3%B3gica%20de%20Tlaxcala!5e0!3m2!1ses-419!2smx!4v1703809831513!5m2!1ses-419!2smx" width="150" height="160" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe> <!-- Pega aquí el código de inserción de Google Maps -->
         </div>
     </div>
-    <!-- Tu configuración de Firebase -->
-<!-- Tu configuración de Firebase -->
-<script type="module">
-  // Importa las funciones necesarias de la SDK de Firebase
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js";
-  import { getAnalytics } from "https://www.gstatic.com/firebasejs/8.10.0/firebase-analytics.js";
-  import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc } from "./js/firebase-firestore-compat.js"; // ajusta la ruta según donde hayas guardado el archivo
+    <script type="module">
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-analytics.js";
+        import { getDatabase, ref, push, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-  // Configuración de Firebase
-  const firebaseConfig = {
-    apiKey: "AIzaSyAviRaUfNn8ri0KW5Su69sJ_sHQ1cE-6NE",
-    authDomain: "comentarios1radio.firebaseapp.com",
-    projectId: "comentarios1radio",
-    storageBucket: "comentarios1radio.appspot.com",
-    messagingSenderId: "446347386330",
-    appId: "1:446347386330:web:152d9453b1f74e1f2534e3",
-    measurementId: "G-5M169LTD1Q"
-  };
+        // Your web app's Firebase configuration
+        // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+        const firebaseConfig = {
+            apiKey: "AIzaSyATSV6O5u6Wr0wUOjkZfyP-Bkx_CPBl_Zk",
+            authDomain: "comentarios-radio-9727e.firebaseapp.com",
+            projectId: "comentarios-radio-9727e",
+            storageBucket: "comentarios-radio-9727e.appspot.com",
+            messagingSenderId: "746508664126",
+            appId: "1:746508664126:web:a13f5ed7707310083b406f",
+            measurementId: "G-E3KD1F6ZCM"
+        };
 
-  // Inicializa Firebase
-  const app = initializeApp(firebaseConfig);
-  const analytics = getAnalytics(app);
-  const db = getFirestore(app);
-  // Funciones para manipular comentarios en Firestore
-  function saveComment() {
-    const comment = $("#comment-input").val();
-    if (comment.trim() !== "") {
-      addDoc(collection(db, "comments"), { text: comment });
-      loadComments();
-      $("#comment-input").val("");
-    }
-  }
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
+        const database = getDatabase(app);
+        const commentsRef = ref(database, 'comments');
 
-  function loadComments() {
-    const commentsRef = collection(db, "comments");
-    const commentsContainer = $("#comments-container");
-    commentsContainer.html("<h3>Comentarios anteriores:</h3>");
+        function saveComment() {
+            const comment = $("#comment-input").val().trim();
+            if (comment !== "") {
+                push(commentsRef, comment); // Almacena el comentario en Firebase
+                loadComments();
+                $("#comment-input").val("");
+            }
+        }
 
-    getDocs(commentsRef).then((querySnapshot) => {
-      if (!querySnapshot.empty) {
-        querySnapshot.forEach((doc) => {
-          const commentItem = $("<div>").addClass("comment-item");
-          const commentText = $("<p>").text(`${doc.id}. ${doc.data().text}`);
-          const deleteBtn = $("<button>")
-            .addClass("delete-btn")
-            .html('<i class="fas fa-trash"></i>')
-            .click(function () {
-              deleteComment(doc.id);
+        function loadComments() {
+            onValue(commentsRef, (snapshot) => {
+                const comments = snapshot.val() || {};
+                const commentsContainer = $("#comments-container");
+                commentsContainer.html("<h3>Comentarios anteriores:</h3>");
+
+                if (Object.keys(comments).length > 0) {
+                    Object.entries(comments).forEach(([key, comment]) => {
+                        const commentItem = $("<div>").addClass("comment-item");
+                        const commentText = $("<p>").text(`${key}. ${comment}`);
+                        const deleteBtn = $("<button>")
+                            .addClass("delete-btn")
+                            .html('<i class="fas fa-trash"></i>')
+                            .click(function () {
+                                deleteComment(key);
+                            });
+
+                        commentItem.append(commentText, deleteBtn);
+                        commentsContainer.append(commentItem);
+                    });
+                } else {
+                    commentsContainer.append("<p>No hay comentarios aún.</p>");
+                }
+            });
+        }
+
+        function deleteComment(key) {
+            // Elimina el comentario de Firebase utilizando la clave
+            // Reemplaza con la lógica real de eliminación si es necesario
+        }
+
+        $(document).ready(function () {
+            $("#comment-btn").click(function () {
+                $("#comment-modal").addClass("show");
+                loadComments();
             });
 
-          commentItem.append(commentText, deleteBtn);
-          commentsContainer.append(commentItem);
+            $(".modal-close-btn").click(function () {
+                $(".modal").removeClass("show");
+            });
         });
-      } else {
-        commentsContainer.append("<p>No hay comentarios aún.</p>");
-      }
-    });
-  }
-
-  function deleteComment(commentId) {
-    const commentsRef = collection(db, "comments");
-    deleteDoc(doc(commentsRef, commentId)).then(() => {
-      loadComments();
-    });
-  }
-
-  // Resto de tu código JavaScript va aquí
-</script>
-
+    </script>
 
     <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
     <script src="js/lunaradio-sincors.js"></script>
@@ -466,7 +470,6 @@
 </body>
 
 </html>
-
 
 
 
