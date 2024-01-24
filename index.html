@@ -5,11 +5,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-title" content="Malinche Radio">
+    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/128/2829/2829075.png">
+    <meta name="msapplication-TileImage" content="https://cdn-icons-png.flaticon.com/128/2829/2829075.png">
+    <meta name="msapplication-TileColor" content="#000000">
+
     
     <title>Malinche Radio</title>
     <link rel="shortcut icon" href="https://cdn-icons-png.flaticon.com/128/2829/2829075.png" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
-    
     <style>
         body {
             font-size: 1.5vw;
@@ -259,7 +265,7 @@
 
     <div id="contact-modal">
         <span class="modal-close-btn" onclick="closeContact()">&times;</span>
-        <h2>Contacto</h2>
+        <P>Contacto</P>
         
         <div id="contact-container">
             <a class="social-btn" href="#" target="_blank"><i class="fab fa-facebook"></i> Facebook</a>
@@ -268,93 +274,26 @@
             <a class="social-btn" href="#" target="_blank"><i class="fab fa-tiktok"></i> TikTok</a>
             <a class="social-btn" href="#" target="_blank"><i class="fab fa-twitter"></i> Twitter</a>
             <a class="social-btn" href="#" target="_blank"><i class="fab fa-whatsapp"></i> WhatsApp</a>
+            
 
             
         </div>
+        <P>Ubicación</P>
         <div id="map-container">
             <iframe src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d15054.376712369289!2d-97.9665994!3d19.386717!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x85cffced901ddce7%3A0x900a8087658724ce!2sUniversidad%20Tecnol%C3%B3gica%20de%20Tlaxcala!5e0!3m2!1ses-419!2smx!4v1703809831513!5m2!1ses-419!2smx" width="150" height="160" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe> <!-- Pega aquí el código de inserción de Google Maps -->
         </div>
     </div>
-    <script type="module">
-        // Importa las funciones que necesitas de las bibliotecas SDK de Firebase
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-analytics.js";
-        import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-      
-        // Configuración de tu aplicación Firebase
-        const firebaseConfig = {
-          apiKey: "AIzaSyATSV6O5u6Wr0wUOjkZfyP-Bkx_CPBl_Zk",
-          authDomain: "comentarios-radio-9727e.firebaseapp.com",
-          projectId: "comentarios-radio-9727e",
-          storageBucket: "comentarios-radio-9727e.appspot.com",
-          messagingSenderId: "746508664126",
-          appId: "1:746508664126:web:a13f5ed7707310083b406f",
-          measurementId: "G-E3KD1F6ZCM"
-        };
-      
-        // Inicializa Firebase
-        const app = initializeApp(firebaseConfig);
-        const analytics = getAnalytics(app);
-        const firestore = getFirestore(app);
-        const commentsCollection = collection(firestore, 'comments');
-      
-        function saveComment() {
-  const comment = $("#comment-input").val().trim();
-  if (comment !== "") {
-    addDoc(commentsCollection, { text: comment })
-      .then(() => {
-        loadComments();
-        $("#comment-input").val("");
-      })
-      .catch((error) => {
-        console.error("Error al guardar el comentario:", error);
-      });
-  }
-}
-
-function loadComments() {
-  getDocs(commentsCollection).then((querySnapshot) => {
-    const commentsContainer = $("#comments-container");
-    commentsContainer.html("<h3>Comentarios anteriores:</h3>");
-
-    if (!querySnapshot.empty) {
-      querySnapshot.forEach((doc) => {
-        const commentItem = $("<div>").addClass("comment-item");
-        const commentText = $("<p>").text(`${doc.id}. ${doc.data().text}`);
-        const deleteBtn = $("<button>")
-          .addClass("delete-btn")
-          .html('<i class="fas fa-trash"></i>')
-          .click(function () {
-            deleteComment(doc.id);
-          });
-
-        commentItem.append(commentText, deleteBtn);
-        commentsContainer.append(commentItem);
-      });
-    } else {
-      commentsContainer.append("<p>No hay comentarios aún.</p>");
-    }
-  });
-}
-
-      
-        function deleteComment(docId) {
-          // Elimina el comentario de Cloud Firestore utilizando el ID del documento
-          // Reemplaza con la lógica real de eliminación si es necesario
+    <script>
+        if ('serviceWorker' in navigator) {
+          navigator.serviceWorker.register('/service-worker.js')
+            .then((registration) => {
+              console.log('Service Worker registrado con éxito:', registration);
+            })
+            .catch((error) => {
+              console.log('Error al registrar el Service Worker:', error);
+            });
         }
-      
-        $(document).ready(function () {
-          $("#comment-btn").click(function () {
-            $("#comment-modal").addClass("show");
-            loadComments();
-          });
-      
-          $(".modal-close-btn").click(function () {
-            $(".modal").removeClass("show");
-          });
-        });
       </script>
-      
 
     <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
     <script src="js/lunaradio-sincors.js"></script>
@@ -379,7 +318,7 @@ function loadComments() {
             visualizertype: "3",
             metadatatechnic: "2",
             ownmetadataurl: "2",
-            streamurl: "http://stream.zeno.fm/2aeez7zqhkhvv",
+            streamurl: "https://stream.zeno.fm/zn7knqgkbx4tv",
             streamtype: "radiozeno",
             icecastmountpoint: "",
             shoutcastpath: "/stream",
@@ -473,5 +412,3 @@ function loadComments() {
         }
     </script>
 </body>
-
-</html>
