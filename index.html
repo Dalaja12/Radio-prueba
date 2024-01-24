@@ -3,7 +3,7 @@
     
 
 <head>
-    <link rel="manifest" href="/manifest.json">
+    <link rel="manifest" href="js/manifest.json">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -286,7 +286,7 @@
     </div>
     <script>
         if ('serviceWorker' in navigator) {
-          navigator.serviceWorker.register('/service-worker.js')
+          navigator.serviceWorker.register('js/service-worker.js')
             .then((registration) => {
               console.log('Service Worker registrado con éxito:', registration);
             })
