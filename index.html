@@ -3,7 +3,7 @@
     
 
 <head>
-    <link rel="manifest" href="js/manifest.json">
+    <link rel="manifest" href="/manifest.json">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -12,6 +12,10 @@
     <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/128/2829/2829075.png">
     <meta name="msapplication-TileImage" content="https://cdn-icons-png.flaticon.com/128/2829/2829075.png">
     <meta name="msapplication-TileColor" content="#000000">
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    <script src="./init-firebase.js"></script>
 
     
     <title>Malinche Radio</title>
@@ -286,7 +290,7 @@
     </div>
     <script>
         if ('serviceWorker' in navigator) {
-          navigator.serviceWorker.register('js/service-worker.js')
+          navigator.serviceWorker.register('/service-worker.js')
             .then((registration) => {
               console.log('Service Worker registrado con éxito:', registration);
             })
@@ -295,6 +299,66 @@
             });
         }
       </script>
+        <script>
+            // Configura la información de tu proyecto de Firebase
+            var firebaseConfig = {
+                apiKey: "AIzaSyC2rGTkB00hOYsDAopd3eOLGNiwbDu7xGA",
+                authDomain: "malinchechat.firebaseapp.com",
+                projectId: "malinchechat",
+                storageBucket: "malinchechat.appspot.com",
+                messagingSenderId: "122609126162",
+                appId: "1:122609126162:web:da2c40683e0c5f6b8f81cb"
+            };
+    
+            // Inicializa Firebase
+            firebase.initializeApp(firebaseConfig);
+    
+            // Obtén una referencia a la base de datos
+            var database = firebase.database();
+            
+            // Función para guardar comentario en Firebase
+            function saveComment() {
+                const comment = $("#comment-input").val();
+                if (comment.trim() !== "") {
+                    // Obtén una referencia a la ubicación de los comentarios en la base de datos
+                    var commentsRef = database.ref("comentarios");
+    
+                    // Agrega un nuevo comentario
+                    commentsRef.push({
+                        comentario: comment
+                    });
+    
+                    // Limpia el campo de comentario
+                    $("#comment-input").val("");
+                }
+            }
+    
+            // Función para cargar comentarios desde Firebase
+            function loadComments() {
+                var commentsRef = database.ref("comentarios");
+    
+                commentsRef.once("value", function (snapshot) {
+                    const commentsContainer = $("#comments-container");
+                    commentsContainer.html("<h3>Comentarios anteriores:</h3>");
+    
+                    if (snapshot.exists()) {
+                        snapshot.forEach(function (childSnapshot) {
+                            var comment = childSnapshot.val().comentario;
+    
+                            // Crea el elemento de comentario
+                            const commentItem = $("<div>").addClass("comment-item");
+                            const commentText = $("<p>").text(comment);
+    
+                            // Agrega el comentario al contenedor
+                            commentItem.append(commentText);
+                            commentsContainer.append(commentItem);
+                        });
+                    } else {
+                        commentsContainer.append("<p>No hay comentarios aún.</p>");
+                    }
+                });
+            }
+        </script>
 
     <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
     <script src="js/lunaradio-sincors.js"></script>
@@ -413,3 +477,6 @@
         }
     </script>
 </body>
+
+</html>
+
